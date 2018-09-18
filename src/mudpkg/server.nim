@@ -1,11 +1,31 @@
-import websocket, asyncdispatch, asynchttpserver, json, macros, asyncnet, threadpool, net, uri
+import websocket, asyncdispatch, asynchttpserver, asyncnet, tables
 
 import src/mudpkg/protocol
+import src/mudpkg/map
+
+proc newUserFromInput(websocket: AsyncWebSocket): Future[User] {.async.} =
+  ## Create a new user based on user input
+  new result
+  asyncCheck websocket.sendText("Enter your name")
+  let data = await websocket.readData()
+  let parsedData = parseMessage(data)
+  result.name = $parsedData
+  result.id = 1
 
 proc processRequest(websocket: AsyncWebSocket) {.async.} =
   ## Process a request a websocket request
+  var user = await newUserFromInput(websocket)
   echo "Processing Request"
   while true:
+    asyncCheck websocket.sendText("Welcome " & user.name)
+    for key, option in map1.pairs():
+      case key
+      of "default":
+        for line in option:
+          asyncCheck websocket.sendText(line)
+      else:
+        continue
+
     let data = await websocket.readData()
     let parsedData = parseMessage(data)
 
