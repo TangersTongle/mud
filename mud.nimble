@@ -26,4 +26,4 @@ task run, "Start the server":
 
 task runServerTests, "Run the source server tests":
   exec("mkdir -p bin")
-  exec("nim c -r --out:bin/server src/mudpkg/server.nim")
+  exec("nim c -r --threads:on --out:bin/server src/mudpkg/server.nim")
